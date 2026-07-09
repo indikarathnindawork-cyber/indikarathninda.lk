@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maths with Indika - Coming Soon</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;0,900;1,600&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden; /* Prevent scrolling as it's a single splash screen */
+            background-color: #ffffff; /* Updated to Pure White */
+        }
+
+        /* Font Families */
+        .font-serif-custom { font-family: 'Playfair Display', Georgia, serif; }
+        .font-mono-custom { font-family: 'JetBrains Mono', monospace; }
+
+        /* Sunburst Background Effect */
+        .premium-radial-bg {
+            position: absolute; 
+            inset: 0;
+            background: repeating-conic-gradient(from 0deg, rgba(255,159,28,0.03) 0deg 10deg, transparent 10deg 20deg);
+            pointer-events: none; 
+            z-index: 0;
+            /* Optional: Add slow rotation to the sunburst */
+            animation: slow-spin 120s linear infinite;
+        }
+
+        @keyframes slow-spin {
+            from { transform: scale(2) rotate(0deg); }
+            to { transform: scale(2) rotate(360deg); }
+        }
+
+        /* Moving Black to Ash Gradient Text */
+        .moving-gradient-text {
+            background: linear-gradient(-45deg, #050505 25%, #9e9e9e 50%, #050505 75%);
+            background-size: 200% auto;
+            color: #000;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 5s linear infinite;
+            /* Subtly enhancing legibility */
+            text-shadow: 0px 4px 15px rgba(0,0,0,0.05);
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+        
+        /* Glassmorphism Status Box - Ultra Clear Liquid Refraction */
+        .status-glass {
+            /* Substantially lower opacity for the base background */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%);
+            /* Heavy blur and saturation for liquid refraction effect */
+            backdrop-filter: blur(32px) saturate(180%);
+            -webkit-backdrop-filter: blur(32px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            /* Refined inner and outer shadows for depth and thickness */
+            box-shadow: 
+                0 30px 60px -15px rgba(255, 159, 28, 0.15), 
+                inset 0 1.5px 2px rgba(255, 255, 255, 0.9),
+                inset 0 -1px 2px rgba(255, 159, 28, 0.15);
+        }
+        
+        /* Text glow effect for the animated text */
+        .text-glow {
+            text-shadow: 0 0 15px rgba(255, 123, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.2);
+            color: #ffffff; /* White text */
+        }
+    </style>
+</head>
+
+<body class="relative flex flex-col justify-between items-center selection:bg-orange-500 selection:text-white">
+
+    <!-- Background Wrapper to contain the rotating sunburst securely -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none flex justify-center items-center z-0">
+        <div class="premium-radial-bg w-[200vw] h-[200vh]"></div>
+        <!-- Perfectly Centered Orange to Yellow Circular Glow -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] sm:w-[600px] sm:h-[600px] rounded-full bg-gradient-to-tr from-orange-400 via-orange-300 to-yellow-200 filter blur-[100px] md:blur-[140px] opacity-40 z-0"></div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="relative z-20 flex flex-col justify-between h-screen w-full py-10 px-6 max-w-7xl mx-auto">
+
+        <!-- Top Header Titles -->
+        <div class="text-center w-full mt-4 md:mt-8 flex flex-col items-center select-none animate-fade-in z-30">
+            <h2 class="font-serif-custom text-2xl md:text-4xl italic font-semibold mb-2 moving-gradient-text">Maths with</h2>
+            <h1 class="font-serif-custom text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-extrabold uppercase leading-none moving-gradient-text tracking-tight">
+                Indika Rathinda
+            </h1>
+        </div>
+
+        <!-- Teacher Portrait Centered -->
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full flex justify-center items-end h-[65vh] sm:h-[70vh] md:h-[75vh] pointer-events-none z-10">
+            <img
+                src="https://raw.githubusercontent.com/dulajbandara28-sketch/Rajans-Media-unit/main/bg%20remvoed.png"
+                alt="Indika Rathinda Portrait"
+                class="h-full w-auto object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.15)] z-10 select-none transform translate-y-4 md:translate-y-6 scale-110"
+                onerror="this.src='https://placehold.co/800x1000/F8F5F1/0F0F11?text=Indika+Rathinda'"
+            />
+        </div>
+
+        <!-- Animated Status/Coming Soon Box -->
+        <div class="w-full max-w-2xl mx-auto flex flex-col items-center mt-auto z-30 mb-8 sm:mb-12">
+            <div class="status-glass w-full rounded-2xl px-6 py-5 sm:py-6 flex items-center justify-center min-h-[80px] sm:min-h-[96px] transition-all duration-300">
+                <!-- The text container that JS will manipulate -->
+                <div id="decoding-text" class="font-mono-custom text-xl sm:text-2xl md:text-3xl font-extrabold tracking-[0.2em] uppercase text-center w-full text-glow flex justify-center">
+                    <!-- Javascript populates this -->
+                    INITIALIZING...
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /**
+         * Matrix/Scramble text effect logic - Smoothed with requestAnimationFrame
+         */
+        const textElement = document.getElementById('decoding-text');
+        const targetWord = "COMING SOON";
+        // A collection of math and greek symbols for the "scrambled" state
+        const mathSymbols = "∑∫π∞√θΔΩαβγλμ≈≠≡≤≥∂∇⊕⊗";
+        
+        let animationFrameId;
+        const FPS = 24; // Throttle to 24 FPS for that crisp "matrix" switching feel, while keeping timeline smooth
+        const frameInterval = 1000 / FPS;
+
+        function smoothScramble(durationMs, mode) {
+            return new Promise(resolve => {
+                const startTime = performance.now();
+                let lastDrawTime = 0;
+
+                function tick(now) {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / durationMs, 1);
+
+                    // Only update the DOM text at target FPS to prevent motion blur and tearing
+                    if (now - lastDrawTime >= frameInterval) {
+                        lastDrawTime = now;
+                        let currentString = '';
+
+                        for (let i = 0; i < targetWord.length; i++) {
+                            if (targetWord[i] === ' ') {
+                                currentString += ' ';
+                                continue;
+                            }
+
+                            if (mode === 'chaos') {
+                                // Pure random math symbols
+                                currentString += mathSymbols.charAt(Math.floor(Math.random() * mathSymbols.length));
+                            } else {
+                                // Resolving to or encoding from English
+                                // Add spatial variance so characters resolve left-to-right loosely
+                                const posFactor = i / targetWord.length; 
+                                const threshold = posFactor * 0.4 + 0.3;
+
+                                let showEnglish = false;
+                                if (mode === 'decode') {
+                                    showEnglish = progress > threshold && Math.random() < progress;
+                                    // Guarantee completion at the end
+                                    if (progress > 0.95) showEnglish = true; 
+                                } else if (mode === 'encode') {
+                                    showEnglish = progress < (1 - threshold) || (Math.random() > progress);
+                                    // Guarantee math at the end
+                                    if (progress > 0.95) showEnglish = false;
+                                }
+
+                                if (showEnglish) {
+                                    currentString += targetWord[i];
+                                } else {
+                                    currentString += mathSymbols.charAt(Math.floor(Math.random() * mathSymbols.length));
+                                }
+                            }
+                        }
+                        textElement.innerText = currentString;
+                    }
+
+                    if (progress < 1) {
+                        animationFrameId = requestAnimationFrame(tick);
+                    } else {
+                        // Ensure final state is perfect
+                        if (mode === 'decode') textElement.innerText = targetWord;
+                        resolve();
+                    }
+                }
+                
+                // Start animation loop
+                animationFrameId = requestAnimationFrame(tick);
+            });
+        }
+
+        // Main Animation Loop Sequencer
+        async function runSequence() {
+            while (true) {
+                // Step 1: Form math formulas (Chaos) for 2 seconds
+                await smoothScramble(2000, 'chaos');
+                
+                // Step 2: Smoothly decode into text "COMING SOON"
+                await smoothScramble(600, 'decode');
+                
+                // Step 3: Hold "COMING SOON" for 5 seconds
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                
+                // Step 4: Break down back into math chaos (Encode)
+                await smoothScramble(500, 'encode');
+            }
+        }
+
+        // Start the loop when the page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            // Slight delay before starting for dramatic effect
+            setTimeout(() => {
+                runSequence();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
