@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { LogOut } from 'lucide-react';
 
-export default function AdminControlPanel({ onViewStudentSite }: { onViewStudentSite: () => void }) {
+export default function AdminControlPanel({ onViewStudentSite, onLogout }: { onViewStudentSite: () => void; onLogout: () => void }) {
   const [activeTab, setActiveTab] = useState<'students' | 'courses'>('students');
   const [students, setStudents] = useState<any[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
@@ -137,14 +138,23 @@ export default function AdminControlPanel({ onViewStudentSite }: { onViewStudent
               Manage Courses
             </button>
           </div>
+          </div>
+          <div className="flex gap-4">
+            <button 
+              onClick={onViewStudentSite}
+              className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-lg font-bold uppercase tracking-widest text-sm shadow-lg shadow-purple-500/20 transition-all transform hover:scale-105"
+            >
+              View Student Site
+            </button>
+            <button 
+              onClick={onLogout}
+              className="bg-red-600/80 hover:bg-red-500 text-white px-4 py-3 rounded-lg font-bold uppercase tracking-widest text-sm flex items-center gap-2 shadow-lg shadow-red-500/20 transition-all transform hover:scale-105"
+            >
+              <LogOut size={18} />
+              Log Out
+            </button>
+          </div>
         </div>
-        <button 
-          onClick={onViewStudentSite}
-          className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-lg font-bold uppercase tracking-widest text-sm shadow-lg shadow-purple-500/20 transition-all transform hover:scale-105"
-        >
-          View Student Site
-        </button>
-      </div>
 
       {/* Tab: STUDENTS */}
       {activeTab === 'students' && (

@@ -24,7 +24,8 @@ import {
   ArrowLeft,
   Beaker,
   Eye,
-  EyeOff
+  EyeOff,
+  LogOut
 } from "lucide-react";
 
 import ThemeToggle from "./components/theme";
@@ -37,7 +38,7 @@ import PremiumPayment from "./components/PremiumPayment";
 import { supabase } from "./lib/supabase";
 
 // Types
-type Phase = "loading" | "login" | "selection" | "dashboard" | "lab" | "admin";
+type Phase = "loading" | "login" | "selection" | "dashboard" | "lab" | "admin" | "updatePassword";
 
 interface LightningBolt {
   angle: number;
@@ -126,6 +127,7 @@ export default function App() {
   // Phase 2 (Login) States
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [fullName, setFullName] = useState<string>("");
@@ -229,6 +231,40 @@ export default function App() {
       setToast((prev) => (prev.msg === msg ? { ...prev, show: false } : prev));
     }, 3000);
   };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setPhase("login");
+      setIsAdmin(false);
+      triggerToast("Logged out successfully");
+    } catch (error) {
+      triggerToast("Error logging out");
+    }
+  };
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      triggerToast("Password updated successfully!");
+      setPhase("selection");
+    } catch (error: any) {
+      triggerToast(error.message || "Error updating password");
+    }
+  };
+
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setPhase("updatePassword");
+      }
+    });
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
 
   // ---------------------------------------------------------------------------
   // Vintage Comic Audio Synthesizer (Standard Web Audio API)
@@ -867,17 +903,41 @@ export default function App() {
     }
   };
 
-  const triggerForgotClick = (e: React.MouseEvent) => {
+  const triggerForgotClick = async (e: React.MouseEvent) => {
     e.preventDefault();
+    if (!email) {
+      setStatusAlert({
+        show: true,
+        isSuccess: false,
+        text: "PLEASE ENTER YOUR EMAIL ADDRESS FIRST",
+        emoji: "⚠️"
+      });
+      triggerToast("Email address required for password recovery");
+      return;
+    }
+
     const w = canvasRef.current?.width || 500;
     const h = canvasRef.current?.height || 500;
     if (triggerInteractionExplosionRef.current) {
-      triggerInteractionExplosionRef.current(w / 2, h / 2, "REDIRECT!");
+      triggerInteractionExplosionRef.current(w / 2, h / 2, "RECOVERY!");
     }
-    triggerToast("Redirecting to Instructor WhatsApp for password recovery...");
-    setTimeout(() => {
-      window.open("https://api.whatsapp.com/send/?phone=94713116877&text=Sir%2C+I+forgot+my+password+to+the+web.&type=phone_number&app_absent=0&utm_source=chatgpt.com", "_blank");
-    }, 400);
+    
+    setStatusAlert({ show: true, isSuccess: true, text: "SENDING RECOVERY LINK...", emoji: "🔄" });
+    triggerToast("Initiating password recovery protocol...");
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin,
+      });
+
+      if (error) throw error;
+
+      setStatusAlert({ show: true, isSuccess: true, text: "RECOVERY LINK SENT TO EMAIL", emoji: "📩" });
+      triggerToast("Check your email for the password recovery link");
+    } catch (error: any) {
+      setStatusAlert({ show: true, isSuccess: false, text: error.message || "FAILED TO SEND RECOVERY LINK", emoji: "❌" });
+      triggerToast("Password recovery failed");
+    }
   };
 
   // ---------------------------------------------------------------------------
@@ -1405,13 +1465,15 @@ export default function App() {
                     <label className="text-xs font-black text-black uppercase tracking-wider">
                       SECURE KEY
                     </label>
-                    <a 
-                      href="#" 
-                      onClick={triggerForgotClick} 
-                      className="text-xs font-black text-red-600 tracking-wider hover:underline font-bold"
-                    >
-                      FORGOT?
-                    </a>
+                    {!isSignUp && (
+                      <a 
+                        href="#" 
+                        onClick={triggerForgotClick} 
+                        className="text-xs font-black text-red-600 tracking-wider hover:underline font-bold"
+                      >
+                        FORGOT?
+                      </a>
+                    )}
                   </div>
                   <div className="relative">
                     <input
@@ -1546,7 +1608,17 @@ export default function App() {
                   onToggle={() => setIsDarkTheme(!isDarkTheme)} 
                   playAudio={playRetroSound}
                 />
-
+                <button 
+                  onClick={handleLogout}
+                  className={`border px-4 py-2 text-[10px] uppercase tracking-[0.25em] font-bold flex items-center gap-2 rounded-xl backdrop-blur-md cursor-pointer transition-all ${
+                    isDarkTheme 
+                      ? "border-red-500/30 hover:border-red-500/50 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300" 
+                      : "border-red-200 hover:border-red-300 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700"
+                  }`}
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                  Log Out
+                </button>
               </div>
             </header>
 
@@ -1784,7 +1856,17 @@ export default function App() {
                   <ArrowLeft className="h-3.5 w-3.5" />
                   Return to Lobby
                 </button>
-
+                <button 
+                  onClick={handleLogout}
+                  className={`border px-4 py-2 text-[10px] uppercase tracking-[0.25em] font-bold flex items-center gap-2 rounded-xl backdrop-blur-md cursor-pointer transition-all ${
+                    isDarkTheme 
+                      ? "border-red-500/30 hover:border-red-500/50 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300" 
+                      : "border-red-200 hover:border-red-300 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700"
+                  }`}
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                  Log Out
+                </button>
               </div>
             </header>
  
@@ -2312,10 +2394,60 @@ export default function App() {
       </div>
 
       {/* =======================================================================
+          PHASE UPDATE PASSWORD
+          ======================================================================= */}
+      {phase === "updatePassword" && (
+        <div className="phase-login-theme flex items-center justify-center h-screen w-screen overflow-hidden bg-[#0b0b0f] p-6">
+          <div className="w-full max-w-sm mx-auto p-8 bg-white rounded-xl shadow-2xl relative z-20">
+            <h1 className="text-3xl font-black text-black leading-tight mb-2 tracking-tight uppercase">
+              Update Password
+            </h1>
+            <p className="text-xs text-gray-700 mb-6 font-semibold uppercase tracking-wider">
+              Enter your new secure key
+            </p>
+            <form onSubmit={handleUpdatePassword} className="space-y-5">
+              <div>
+                <label className="text-xs font-black text-black uppercase tracking-wider mb-2 block">
+                  NEW SECURE KEY
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="••••••••••••"
+                    className="comic-input-bold w-full pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+              </div>
+              <div className="pt-3">
+                <HapticAppleButton 
+                  type="submit" 
+                  tooltipTitle="UPDATE KEY"
+                  tooltipDesc="Updates your credentials in the secure vault."
+                  className="comic-btn-bold w-full py-4 text-center cursor-pointer uppercase tracking-wider font-extrabold block"
+                >
+                  SAVE NEW PASSWORD
+                </HapticAppleButton>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* =======================================================================
           PHASE X: ADMIN PANEL
           ======================================================================= */}
       {phase === "admin" && (
-        <AdminControlPanel onViewStudentSite={() => setPhase("selection")} />
+        <AdminControlPanel onViewStudentSite={() => setPhase("selection")} onLogout={handleLogout} />
       )}
 
     </div>
