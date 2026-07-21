@@ -6,7 +6,7 @@ import {defineConfig} from 'vite';
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
-     base: '/maths_with_indika/', 
+     base: '/indikarathninda.lk/', 
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
